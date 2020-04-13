@@ -39,6 +39,17 @@ func createBigFile(name string) string {
 	return bigFile
 }
 
+func createMediumFile(name string) string {
+	mediumFile := name + "/medium.txt"
+	fmt.Printf("writing medium file\n")
+	cmd := exec.Command("dd", "if=/dev/urandom", "of=" + mediumFile, "bs=1048576", "count=5")
+	err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+	return mediumFile
+}
+
 func createSmallFile(name string) string {
 	smallFile := name + "/small.txt"
 	fmt.Printf("writing small file\n")
@@ -118,6 +129,34 @@ func BenchmarkSmallFileMemFS(b *testing.B) {
 func BenchmarkSmallFileDiskFS(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		res, err := http.Get("http://localhost:7777/diskfs/small.txt")
+		if err != nil {
+			b.Fatal(err)
+		}
+		defer res.Body.Close()
+		_, err = ioutil.ReadAll(res.Body)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkMediumFileMemFS(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		res, err := http.Get("http://localhost:6666/memfs/medium.txt")
+		if err != nil {
+			b.Fatal(err)
+		}
+		defer res.Body.Close()
+		_, err = ioutil.ReadAll(res.Body)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkMediumFileDiskFS(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		res, err := http.Get("http://localhost:7777/diskfs/medium.txt")
 		if err != nil {
 			b.Fatal(err)
 		}
