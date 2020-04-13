@@ -65,18 +65,26 @@ ok      command-line-arguments  26.610s
 
 <pre>
 Benchmark on linux:
-~/ranveerkunal/memfs % go test memfs_test.go -bench=. -cpu=4 -parallel=4
-temp dir: /tmp/memfs945391658
+~/kamphaus/memfs % go test memfs_test.go -bench=. -cpu=4 -parallel=4
+temp dir: /tmp/memfs018986335
 writing small file
+writing medium file
 writing big file
 ready to benchmark ...
-testing: warning: no tests to run
+goos: linux
+goarch: amd64
+BenchmarkNonExistentMemFS-4    	 5259802	       223 ns/op
+BenchmarkNonExistentDiskFS-4   	  870788	      1422 ns/op
+BenchmarkSmallFileMemFS-4      	   21523	     54604 ns/op
+BenchmarkSmallFileDiskFS-4     	   18241	     65965 ns/op
+BenchmarkMediumFileMemFS-4     	     426	   2790326 ns/op
+BenchmarkMediumFileDiskFS-4    	     458	   2603583 ns/op
+BenchmarkBigFileMemFS-4        	      24	  46187587 ns/op
+BenchmarkBigFileDiskFS-4       	      33	  35086878 ns/op
 PASS
-BenchmarkNonExistentMemFS-4       500000              7918 ns/op
-BenchmarkNonExistentDiskFS-4      100000             16862 ns/op
-BenchmarkSmallFileMemFS-4           2000            811382 ns/op
-BenchmarkSmallFileDiskFS-4          2000            836498 ns/op
-BenchmarkBigFileMemFS-4                5        4629695200 ns/op
-BenchmarkBigFileDiskFS-4               1       11134569000 ns/op
-ok      command-line-arguments  109.350s
+ok  	command-line-arguments	19.123s
 </pre>
+
+It looks it's a speedup for small or non existent files.
+As soon as there are medium sized files (5 MiB) it's more efficient if the kernel takes care of caching the files.
+
