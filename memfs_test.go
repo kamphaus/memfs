@@ -85,6 +85,7 @@ var (
 func init() {
 	name := setUp()
 	createSmallFile(name)
+	createMediumFile(name)
 	createBigFile(name)
 
 	memFS, err = memfs.New(name)
